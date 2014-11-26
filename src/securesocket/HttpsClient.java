@@ -25,8 +25,11 @@ public class HttpsClient {
 			//启用所有密码组
 			String[] supported = socket.getSupportedCipherSuites();
 			String[] enabled=socket.getEnabledCipherSuites();
-			System.out.println("supported:"+Arrays.asList(supported));
-			System.out.println("enabled:"+Arrays.asList(enabled));
+			System.out.println("supportedCipherSuites:"+Arrays.asList(supported));
+			System.out.println("enabledCipherSuites:"+Arrays.asList(enabled));
+			System.out.println("enableSessionCreation:"+socket.getEnableSessionCreation());
+			System.out.println("useClientMode:"+socket.getUseClientMode());
+			System.out.println("needClientAuth:"+socket.getNeedClientAuth());
 			socket.setEnabledCipherSuites(supported);
 			//
 			socket.addHandshakeCompletedListener(new MyHandshakeCompletedListener());
