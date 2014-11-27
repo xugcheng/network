@@ -18,7 +18,7 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 
 public class SecureOrderTaker {
-	public final static int DEFAULT_PORT = 8088;
+	public final static int DEFAULT_PORT = 443;
 	public final static String algorithm = "SSL";
 	
 	public static void main(String[] args) {
