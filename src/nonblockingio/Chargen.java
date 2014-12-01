@@ -33,6 +33,13 @@ public class Chargen {
 			while(true){
 				int n = client.read(buffer);
 				if(n>0){
+					//在buffer的position之前的数据才是有效的,之后的数据无效,需要反转(flip)利用从0~position之间的有效数据.
+					//|------------------position=6
+					//|a--b--c--d--e--f--|
+					// 0--1--2--3--4--5--6--7--8--9--10
+					//---flip()之后
+					//|position=0--------|limit=6
+					//out.write(buffer)打印abedef字符
 					buffer.flip();
 					out.write(buffer);
 					buffer.clear();

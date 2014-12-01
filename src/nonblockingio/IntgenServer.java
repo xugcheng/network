@@ -4,62 +4,50 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-public class ChargenServer {
+public class IntgenServer {
+	
 	public static Logger logger = Logger.getLogger("network");
-	public static int DEFAULT_PORT = 19;
-	public static WritableByteChannel out = Channels.newChannel(System.out);
+	public static int DEFAULT_PORT = 1919;
+	
 	public static void main(String[] args) {
 		int port = DEFAULT_PORT;
 		logger.debug("Listening for connections on port "+port);
-		//初始化常见的可打印字节数组 : ' '--32 , '~'--126
-		byte[] rotation = new byte[95*2];
-		for(byte i=' ';i<='~';i++){
-			rotation[i-' '] = i;
-			rotation[i-' '+95] = i;
-		}
-		for(int i=0;i<rotation.length;i++){
-			System.out.print((char)rotation[i]);
-		}
-		System.out.println();	
-		//初始化服务器通道配置
 		ServerSocketChannel serverChannel;
 		Selector selector;
+		
 		try {
 			serverChannel = ServerSocketChannel.open();
-			selector = Selector.open();
-			
 			ServerSocket ss = serverChannel.socket();
 			ss.bind(new InetSocketAddress(port));
-			
 			serverChannel.configureBlocking(false);
+			selector = Selector.open();
 			serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-			
 		} catch (IOException e) {
-			logger.error("init server channel failed :"+e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return;
 		}
-		//
+		
 		while(true){
 			try {
 				selector.select();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 				break;
 			}
-			Set<SelectionKey> readyKeys = selector.selectedKeys();
-			Iterator<SelectionKey> iterator = readyKeys.iterator();
 			
+			Set<SelectionKey> keys = selector.selectedKeys();
+			Iterator<SelectionKey> iterator = keys.iterator();
 			while(iterator.hasNext()){
 				SelectionKey key = iterator.next();
 				iterator.remove();
@@ -70,42 +58,34 @@ public class ChargenServer {
 						logger.debug("Accepted connection from "+client);
 						client.configureBlocking(false);
 						SelectionKey key2 = client.register(selector, SelectionKey.OP_WRITE);
-						ByteBuffer buffer = ByteBuffer.allocate(74);
-						buffer.put(rotation,0,72);
-						buffer.put((byte)'\r');
-						buffer.put((byte)'\n');
+						ByteBuffer buffer = ByteBuffer.allocate(4);
+						buffer.putInt(0);
 						buffer.flip();
 						key2.attach(buffer);
-						out.write(buffer);
 					}else if(key.isWritable()){
 						SocketChannel client = (SocketChannel)key.channel();
 						ByteBuffer buffer = (ByteBuffer)key.attachment();
-						logger.debug("Writable connection from "+client);
 						if(!buffer.hasRemaining()){
 							buffer.rewind();
-							int first = buffer.get();
-							logger.debug("first:"+(char)first);
-							buffer.rewind();
-							int position = first - ' '+1;
-							buffer.put(rotation,position,72);
-							buffer.put((byte)'\r');
-							buffer.put((byte)'\n');
+							int value = buffer.getInt();
+							buffer.clear();
+							buffer.putInt(value+1);
 							buffer.flip();
 						}
 						client.write(buffer);
 					}
-				} catch (IOException e) {
-					logger.error(e);
+				} catch (Exception e) {
 					key.cancel();
-					try {
+					try{
 						key.channel().close();
-					} catch (Exception e2) {
+					}catch (IOException ex) {
 						
 					}
 				}
-			}//--end of while
-		}//--end of while
-		logger.debug("server stoped.");
+				
+			}
+		}
+		
 	}
 
 }
