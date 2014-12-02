@@ -32,9 +32,19 @@ public class BufferTest {
 		char[] chars = "hijklmn789".toCharArray();
 		charBuffer.put(chars);
 		charBuffer.flip();
+		System.out.println("src:");
 		state(charBuffer);
-		
-		
+		CharBuffer duplicate = charBuffer.duplicate();
+		System.out.println("duplicate:");
+		state(duplicate);
+		duplicate.put('x');
+		System.out.println("des.put('c')");
+		System.out.println("src:");
+		state(charBuffer);
+		System.out.println("duplicate:");
+		state(duplicate);
+		CharBuffer slice = duplicate.slice();
+		System.out.println("slice:"+slice);
 	}
 	
 	public static void state(Buffer buffer){

@@ -24,7 +24,11 @@ public class Intgen {
 			
 			for(int expected = 0;;expected++){
 				client.read(buffer);
-				int actual = view.get();
+				System.out.println(buffer);
+				System.out.println(view);
+				buffer.flip();
+				int actual = view.get();//int actual = buffer.getInt();//可以直接从ByteBuffer中读取4个字节组成int的操作
+				
 				buffer.clear();
 				view.rewind();
 				if(actual!=expected){
