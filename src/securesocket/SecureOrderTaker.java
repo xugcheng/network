@@ -32,7 +32,7 @@ public class SecureOrderTaker {
 			KeyStore ks = KeyStore.getInstance("JKS");
 			//
 			char[] password = "123456".toCharArray();
-			ks.load(new FileInputStream("jnp3e.keys"), password);
+			ks.load(new FileInputStream("resource/jnp3e.keys"), password);
 			kmf.init(ks, password);
 			//
 			context.init(kmf.getKeyManagers(), null, null);
