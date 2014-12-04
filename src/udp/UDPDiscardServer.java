@@ -36,8 +36,7 @@ public class UDPDiscardServer {
 				}
 			}
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
