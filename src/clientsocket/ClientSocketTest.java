@@ -18,7 +18,7 @@ public class ClientSocketTest {
 		Socket socket = null;
 		Writer out = null;
 		try {
-			socket = new Socket("localhost", 7);
+			socket = new Socket("localhost", 9000);
 			OutputStream raw = socket.getOutputStream();
 			BufferedOutputStream buffer = new BufferedOutputStream(raw);
 			out = new OutputStreamWriter(buffer, "ascii");
